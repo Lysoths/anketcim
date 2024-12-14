@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import ClientSideNavigation from "@/components/ClientSideNavigation";
+import { AuthProvider } from "@/components/providers/auth-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,7 +39,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ClientSideNavigation />
-          <main className="pt-16">{children}</main>
+          <AuthProvider>
+            <main className="pt-16">{children}</main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
