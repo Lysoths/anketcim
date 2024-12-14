@@ -89,7 +89,7 @@ export function AuthModal({ children, isAdmin, user }: any) {
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 flex flex-col">
             <Link href="/auth/login" onClick={() => setIsOpen(false)}>
               <Button className="w-full justify-between">
                 <span>Giriş Yap</span>
