@@ -40,7 +40,6 @@ export default function AuthForm({ view }: AuthFormProps) {
         router.push(redirectedFrom);
         router.refresh();
       } else {
-        // Önce auth sistemi üzerinden kullanıcı oluştur
         const { data: authData, error: signUpError } =
           await supabase.auth.signUp({
             email: formState.email,
@@ -54,23 +53,20 @@ export default function AuthForm({ view }: AuthFormProps) {
 
         if (signUpError) throw signUpError;
 
-        // Kullanıcı başarıyla oluşturulduysa users tablosuna ekle
         if (authData.user) {
           const { error: profileError } = await supabase.from("users").insert({
             id: authData.user.id,
             email: formState.email,
             full_name: formState.fullName,
-            password_hash: "", // Auth sisteminde şifre zaten saklanıyor
+            password_hash: "",
             notification_preferences: { email: true, push: true },
           });
 
           if (profileError) throw profileError;
 
-          // Burayı değiştiriyoruz
           setFormState((prev) => ({
             ...prev,
             loading: false,
-            // error yerine success state ekleyebiliriz ama şimdilik Alert'i kullanarak rengi değiştirelim
             error:
               "✅ Kayıt başarılı! Lütfen e-posta adresinize gönderilen doğrulama bağlantısına tıklayın.",
           }));

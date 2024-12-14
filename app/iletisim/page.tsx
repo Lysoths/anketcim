@@ -30,7 +30,6 @@ export default function ContactPage() {
 
   const onSubmit = async (data: ContactFormValues) => {
     try {
-      console.log(data);
     } catch (error) {
       console.error(error);
     }

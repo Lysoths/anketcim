@@ -1,4 +1,3 @@
-// lib/auth-utils.ts
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export const supabase = createClientComponentClient();
@@ -24,5 +23,8 @@ export const signUp = async (email: string, password: string) => {
 
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
+  if (!error) {
+    window.location.href = "/";
+  }
   return { error };
 };

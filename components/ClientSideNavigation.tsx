@@ -3,13 +3,13 @@ import dynamic from "next/dynamic";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navigation from "@/components/Navigation";
+import { supabase } from "@/lib/supabase";
 
 const ClientSideNavigation = () => {
-  const router = useRouter();
   const pathName = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const [isDashboard, setIsDashboard] = useState(false);
-  console.log(pathName);
+
   useEffect(() => {
     setIsMounted(true);
     setIsDashboard(pathName.startsWith("/dashboard"));

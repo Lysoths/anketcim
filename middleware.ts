@@ -11,8 +11,6 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  console.log(session, req.nextUrl.pathname);
-
   // Auth sayfalarını yönet
   if (
     session &&
@@ -22,7 +20,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  // Korumalı rotaları yönet
   if (!session && req.nextUrl.pathname.startsWith("/dashboard")) {
     const redirectUrl = new URL("/auth/login", req.url);
     redirectUrl.searchParams.set("redirectedFrom", req.nextUrl.pathname);

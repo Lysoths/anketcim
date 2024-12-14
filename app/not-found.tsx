@@ -7,7 +7,7 @@ import PageWrapper from "@/components/layout/PageWrapper";
 export default function NotFound() {
   return (
     <PageWrapper>
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex items-center justify-center w-full h-full mt-12">
         <div className="text-center space-y-6 w-full max-w-lg px-4">
           <div className="space-y-2">
             <AlertCircle className="h-24 w-24 mx-auto text-primary animate-bounce" />

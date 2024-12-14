@@ -1,25 +1,62 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { CircleUser, Moon, Sun } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { AuthModal } from "./auth/AuthModal";
+import { supabase } from "@/lib/supabase";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const Navigation = () => {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<any>(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const router = useRouter();
+  const supabase = createClientComponentClient();
   const routes = [
     { label: "Anasayfa", href: "/" },
     { label: "Anket", href: "/anketler" },
     { label: "Hakkımızda", href: "/hakkimizda" },
     { label: "İletişim", href: "/iletisim" },
   ];
+
+  const [user, setUser] = useState<any | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser();
+      if (!currentUser) {
+        setIsAdmin(false);
+
+        return;
+      }
+
+      setUser(currentUser);
+      setIsAdmin(true);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setUser(session.user);
+      } else {
+        return;
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [supabase, router, pathname]);
 
   return (
     <nav className="border-b fixed w-full z-50 bg-background backdrop-blur-sm bg-background/80">
@@ -51,14 +88,6 @@ const Navigation = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-2">
-            {isAdmin && (
-              <Link href="/dashboard">
-                <Button variant="outline" size="sm">
-                  Dashboard
-                </Button>
-              </Link>
-            )}
-
             <Button
               variant="ghost"
               size="icon"
@@ -72,7 +101,7 @@ const Navigation = () => {
               )}
             </Button>
 
-            <AuthModal>
+            <AuthModal user={user} isAdmin={isAdmin}>
               <Button variant="ghost" size="icon">
                 <CircleUser className="h-5 w-5" />
               </Button>
@@ -129,14 +158,6 @@ const Navigation = () => {
                   {route.label}
                 </Link>
               ))}
-
-              {isAdmin && (
-                <Link href="/dashboard" onClick={() => setMenuOpen(false)}>
-                  <Button variant="outline" className="w-full">
-                    Dashboard
-                  </Button>
-                </Link>
-              )}
 
               <div className="flex items-center justify-between pt-4 border-t">
                 <Button

@@ -107,7 +107,7 @@ export default function AboutPage() {
   return (
     <PageWrapper>
       <motion.div
-        className="space-y-8"
+        className="space-y-8 mt-12"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >

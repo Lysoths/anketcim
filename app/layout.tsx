@@ -40,7 +40,7 @@ export default function RootLayout({
         >
           <ClientSideNavigation />
           <AuthProvider>
-            <main className="pt-16">{children}</main>
+            <main className="">{children}</main>
           </AuthProvider>
         </ThemeProvider>
       </body>

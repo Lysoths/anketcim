@@ -16,9 +16,44 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
-
+import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 export default function DashboardPage() {
   const router = useRouter();
+  const supabase = createClientComponentClient();
+  const [user, setUser] = useState<any | null>(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user: currentUser },
+      } = await supabase.auth.getUser();
+      if (!currentUser) {
+        router.push("/auth/login");
+        return;
+      }
+
+      setUser(currentUser);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        setUser(session.user);
+      } else {
+        router.push("/auth/login");
+      }
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, [supabase, router]);
 
   const stats = [
     {
@@ -95,7 +130,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between ">
         <div>
-          <h1 className="text-3xl font-bold">Hoş Geldiniz 👋</h1>
+          <h1 className="text-3xl font-bold">
+            Hoş Geldin {user?.user_metadata?.full_name} 👋
+          </h1>
           <p className="text-muted-foreground mt-1">
             İşte anketlerinizin genel durumu
           </p>
